@@ -73,7 +73,7 @@ function BuyTickets() {
       reference: (new Date()).getTime().toString(),
       email: email,
       amount: quantity * 50 * 100, // Amount in pesewas
-      publicKey: 'pk_test_PLACEHOLDER_KEY', // REPLACE THIS
+      publicKey: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || '',
       currency: 'GHS',
       channels: ['mobile_money', 'card'] as any, // Typed as any to bypass potential type issues with channel strings
       metadata: {
