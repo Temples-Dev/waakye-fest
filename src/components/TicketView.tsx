@@ -1,3 +1,4 @@
+import QRCode from 'react-qr-code'
 
 // Removed import of qrcode.react as it is not installed.
 // Actually checking package.json, qrcode.react is NOT in dependencies.
@@ -10,7 +11,7 @@ interface TicketProps {
   type: string
 }
 
-export const TicketView = ({ name, ticketId }: TicketProps) => {
+export const TicketView = ({ name, ticketId, type }: TicketProps) => {
   return (
     <div className="relative w-full max-w-sm mx-auto bg-black border-2 border-yellow-500 rounded-3xl overflow-hidden shadow-[0_0_30px_rgba(234,179,8,0.3)] text-white font-mono">
       {/* Header */}
@@ -48,14 +49,23 @@ export const TicketView = ({ name, ticketId }: TicketProps) => {
         </div>
       </div>
 
-      {/* Footer / QR Placeholder */}
-      <div className="p-6 bg-white/5 flex justify-center items-center">
-        <div className="w-32 h-32 bg-white p-2 rounded-lg">
-             {/* Simple visual placeholder for QR */}
-            <div className="w-full h-full bg-black flex items-center justify-center text-xs text-center text-gray-500 p-1 break-all">
-                [QR CODE: {ticketId}]
-            </div>
+      {/* QR Code Section */}
+      <div className="p-8 bg-zinc-950 flex flex-col items-center justify-center border-t-2 border-dashed border-gray-800 relative">
+        {/* Cutout circles */}
+        <div className="absolute -top-4 -left-4 w-8 h-8 bg-white rounded-full z-10"></div>
+        <div className="absolute -top-4 -right-4 w-8 h-8 bg-white rounded-full z-10"></div>
+
+        <div className="p-4 bg-white rounded-xl">
+             <div className="h-32 w-32">
+                <QRCode 
+                    value={JSON.stringify({ id: ticketId, name, type })}
+                    size={128}
+                    style={{ height: "auto", maxWidth: "100%", width: "100%" }}
+                    viewBox={`0 0 128 128`}
+                />
+             </div>
         </div>
+        <p className="mt-4 text-xs text-gray-500 font-mono tracking-widest">{ticketId}</p>
       </div>
     </div>
   )

@@ -30,11 +30,12 @@ function BuyTickets() {
   const [isProcessing, setIsProcessing] = useState(false)
   const [tickets, setTickets] = useState<TicketData[]>([])
 
+  const [network, setNetwork] = useState('MTN')
+
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = parseInt(e.target.value)
     if (val > 0 && val <= 10) {
       setQuantity(val)
-      // Resize names array
       const newNames = [...names]
       if (val > names.length) {
         for (let i = names.length; i < val; i++) newNames.push('')
@@ -63,8 +64,8 @@ function BuyTickets() {
   }
 
   const handlePayment = async () => {
-    if (phoneNumber.length < 10) {
-       alert('Please enter a valid mobile number')
+    if (phoneNumber.length !== 10) {
+       alert('Please enter a valid 10-digit mobile number')
        return
     }
     
@@ -173,6 +174,19 @@ function BuyTickets() {
               </div>
 
               <div className="space-y-2">
+                <Label>Mobile Money Network</Label>
+                <select 
+                    className="w-full bg-black border border-zinc-700 text-white p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    value={network}
+                    onChange={(e) => setNetwork(e.target.value)}
+                >
+                    <option value="MTN">MTN Mobile Money</option>
+                    <option value="VODA">Telecel Cash (Vodafone)</option>
+                    <option value="AT">AT Money (AirtelTigo)</option>
+                </select>
+              </div>
+
+              <div className="space-y-2">
                 <Label>Mobile Number</Label>
                 <div className="relative">
                     <Smartphone className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" />
@@ -180,10 +194,18 @@ function BuyTickets() {
                     type="tel" 
                     placeholder="024 123 4567"
                     value={phoneNumber}
-                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    onChange={(e) => {
+                        const val = e.target.value.replace(/\D/g, '')
+                        if (val.length <= 10) setPhoneNumber(val)
+                    }}
                     className="pl-9 bg-black border-zinc-700 text-white"
                     />
                 </div>
+                <p className="text-xs text-gray-500">
+                    {network === 'MTN' && 'Starts with 024, 054, 055, 059...'}
+                    {network === 'VODA' && 'Starts with 020, 050...'}
+                    {network === 'AT' && 'Starts with 027, 057, 026...'}
+                </p>
               </div>
             </CardContent>
             <CardFooter className="flex gap-2">
