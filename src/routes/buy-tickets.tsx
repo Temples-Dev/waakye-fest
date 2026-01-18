@@ -6,6 +6,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { TicketView } from '@/components/TicketView'
+import { toPng } from 'html-to-image'
+import download from 'downloadjs'
 import { Loader2, Download, CheckCircle, Smartphone } from 'lucide-react'
 
 export const Route = createFileRoute('/buy-tickets')({
@@ -81,12 +83,17 @@ function BuyTickets() {
     setStep('success')
   }
 
-  const downloadTicket = (id: string) => {
-    // Mock download
-    alert(`Downloading ticket ${id}... (Implementation would use html-to-image here)`)
-    
-    // In a real app we might window.print()
-    // window.print()
+  const downloadTicket = async (id: string) => {
+    const node = document.getElementById(`ticket-element-${id}`)
+    if (!node) return
+
+    try {
+        const dataUrl = await toPng(node, { cacheBust: true })
+        download(dataUrl, `waakye-fest-ticket-${id}.png`)
+    } catch (error) {
+        console.error('Failed to generate ticket image', error)
+        alert('Could not generate ticket. Please try again.')
+    }
   }
 
   const renderStep = () => {
@@ -199,7 +206,7 @@ function BuyTickets() {
              
              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 justify-items-center">
                 {tickets.map((ticket) => (
-                    <div key={ticket.id} className="flex flex-col gap-4">
+                    <div key={ticket.id} id={`ticket-element-${ticket.id}`} className="flex flex-col gap-4">
                         <TicketView 
                             name={ticket.name}
                             ticketId={ticket.id}
