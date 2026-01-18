@@ -206,12 +206,14 @@ function BuyTickets() {
              
              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 justify-items-center">
                 {tickets.map((ticket) => (
-                    <div key={ticket.id} id={`ticket-element-${ticket.id}`} className="flex flex-col gap-4">
-                        <TicketView 
-                            name={ticket.name}
-                            ticketId={ticket.id}
-                            type={ticket.type}
-                        />
+                    <div key={ticket.id} className="flex flex-col gap-4">
+                        <div id={`ticket-element-${ticket.id}`}>
+                            <TicketView 
+                                name={ticket.name}
+                                ticketId={ticket.id}
+                                type={ticket.type}
+                            />
+                        </div>
                         <Button onClick={() => downloadTicket(ticket.id)} className="w-full bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-700">
                             <Download className="mr-2 h-4 w-4" /> Download Ticket
                         </Button>
