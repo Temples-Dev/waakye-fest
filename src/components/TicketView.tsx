@@ -10,7 +10,7 @@ interface TicketProps {
   type: string
 }
 
-export const TicketView = ({ name, ticketId, type }: TicketProps) => {
+export const TicketView = ({ name, ticketId }: TicketProps) => {
   return (
     <div className="relative w-full max-w-sm mx-auto bg-black border-2 border-yellow-500 rounded-3xl overflow-hidden shadow-[0_0_30px_rgba(234,179,8,0.3)] text-white font-mono">
       {/* Header */}
