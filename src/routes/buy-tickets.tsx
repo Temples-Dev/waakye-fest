@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { TicketView } from '@/components/TicketView'
 import { toPng } from 'html-to-image'
 import download from 'downloadjs'
+import { usePaystackPayment } from 'react-paystack'
 import { Loader2, Download, CheckCircle, Smartphone } from 'lucide-react'
 
 export const Route = createFileRoute('/buy-tickets')({
@@ -31,6 +32,7 @@ function BuyTickets() {
   const [tickets, setTickets] = useState<TicketData[]>([])
 
   const [network, setNetwork] = useState('MTN')
+  const [email, setEmail] = useState('')
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = parseInt(e.target.value)
@@ -63,16 +65,35 @@ function BuyTickets() {
     setStep('payment')
   }
 
-  const handlePayment = async () => {
-    if (phoneNumber.length !== 10) {
-       alert('Please enter a valid 10-digit mobile number')
-       return
-    }
-    
-    setIsProcessing(true)
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    
+  /* 
+    Configuration for Paystack 
+    NOTE: Using a placeholder public key. The user should replace this.
+  */
+  const config = {
+      reference: (new Date()).getTime().toString(),
+      email: email,
+      amount: quantity * 50 * 100, // Amount in pesewas
+      publicKey: 'pk_test_PLACEHOLDER_KEY', // REPLACE THIS
+      currency: 'GHS',
+      channels: ['mobile_money', 'card'] as any, // Typed as any to bypass potential type issues with channel strings
+      metadata: {
+        custom_fields: [
+            {
+                display_name: "Mobile Number",
+                variable_name: "mobile_number",
+                value: phoneNumber
+            },
+            {
+                display_name: "Network",
+                variable_name: "network",
+                value: network
+            }
+        ]
+      }
+  };
+
+  const onSuccess = (reference: any) => {
+    console.log("Payment successful, reference:", reference)
     // Generate Tickets
     const newTickets = names.map(name => ({
       id: Math.random().toString(36).substr(2, 9).toUpperCase(),
@@ -82,6 +103,27 @@ function BuyTickets() {
     setTickets(newTickets)
     setIsProcessing(false)
     setStep('success')
+  };
+
+  const onClose = () => {
+    setIsProcessing(false)
+    alert('Payment cancelled')
+  }
+
+  const initializePayment = usePaystackPayment(config);
+
+  const handlePayment = () => {
+    if (phoneNumber.length !== 10) {
+       alert('Please enter a valid 10-digit mobile number')
+       return
+    }
+    if (!email || !email.includes('@')) {
+        alert('Please enter a valid email address')
+        return
+    }
+    
+    setIsProcessing(true)
+    initializePayment({onSuccess, onClose})
   }
 
   const downloadTicket = async (id: string) => {
@@ -171,6 +213,19 @@ function BuyTickets() {
                       <span className="text-xl font-bold text-yellow-500">GHS {quantity * 50}.00</span>
                   </div>
                    <div className="text-xs text-gray-500">You will receive a prompt to authorize payment.</div>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Email Address</Label>
+                <div className="relative">
+                    <Input 
+                        type="email" 
+                        placeholder="you@example.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="bg-black border-zinc-700 text-white"
+                    />
+                </div>
               </div>
 
               <div className="space-y-2">
