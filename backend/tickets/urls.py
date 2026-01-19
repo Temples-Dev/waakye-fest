@@ -2,6 +2,8 @@ from django.urls import path
 from .views import VerifyPaymentView, TicketDetailView, DashboardStatsView, TransactionListView, InitiatePaymentView, EventSettingsView, CheckInView
 from .analytics_views import EventAnalyticsView, YearOverYearAnalyticsView
 from .user_views import OrganizerListView, OrganizerCreateView, OrganizerDeleteView, CurrentUserView
+from .inquiry_views import InquiryCreateView, InquiryListView, InquiryUnreadCountView, InquiryMarkReadView, InquiryMarkUnreadView
+from .event_views import EventListCreateView, EventDetailView, EventSetActiveView
 
 urlpatterns = [
     path('initiate-payment/', InitiatePaymentView.as_view(), name='initiate-payment'),
@@ -17,4 +19,12 @@ urlpatterns = [
     path('organizers/create/', OrganizerCreateView.as_view(), name='organizer-create'),
     path('organizers/<int:id>/', OrganizerDeleteView.as_view(), name='organizer-delete'),
     path('me/', CurrentUserView.as_view(), name='current-user'),
+    path('inquiries/', InquiryCreateView.as_view(), name='inquiry-create'),
+    path('inquiries/list/', InquiryListView.as_view(), name='inquiry-list'),
+    path('inquiries/unread-count/', InquiryUnreadCountView.as_view(), name='inquiry-unread-count'),
+    path('inquiries/<int:id>/mark-read/', InquiryMarkReadView.as_view(), name='inquiry-mark-read'),
+    path('inquiries/<int:id>/mark-unread/', InquiryMarkUnreadView.as_view(), name='inquiry-mark-unread'),
+    path('events/', EventListCreateView.as_view(), name='event-list-create'),
+    path('events/<int:id>/', EventDetailView.as_view(), name='event-detail'),
+    path('events/<int:id>/set-active/', EventSetActiveView.as_view(), name='event-set-active'),
 ]

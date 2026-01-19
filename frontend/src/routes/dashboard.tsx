@@ -2,7 +2,7 @@
 import { Outlet, useNavigate } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import { Link } from '@tanstack/react-router'
-import { LayoutDashboard, Users, LogOut, ScanLine, Menu, X, TrendingUp, Shield } from 'lucide-react'
+import { LayoutDashboard, Users, LogOut, ScanLine, Menu, X, TrendingUp, Shield, Mail, Settings as SettingsIcon } from 'lucide-react'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/dashboard')({
@@ -13,6 +13,7 @@ export function DashboardLayout() {
     const navigate = useNavigate()
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
     const [isSuperuser, setIsSuperuser] = useState(false)
+    const [unreadCount, setUnreadCount] = useState(0)
 
     useEffect(() => {
         const checkUser = async () => {
@@ -30,6 +31,15 @@ export function DashboardLayout() {
                 if (res.ok) {
                     const data = await res.json()
                     setIsSuperuser(data.is_superuser)
+                }
+                
+                // Fetch unread count
+                const countRes = await fetch(`${apiUrl}/api/inquiries/unread-count/`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                })
+                if (countRes.ok) {
+                    const countData = await countRes.json()
+                    setUnreadCount(countData.unread_count)
                 }
             } catch (err) {
                 console.error("Failed to fetch user info", err)
@@ -141,6 +151,41 @@ export function DashboardLayout() {
                         >
                             <TrendingUp size={20} className="group-hover:text-yellow-400 transition-colors" />
                             <span>Analytics</span>
+                        </Link>
+
+                        <Link 
+                            to="/dashboard/inquiries" 
+                            className="flex items-center space-x-3 px-4 py-3 rounded-lg text-white transition-all duration-200 group"
+                            activeProps={{
+                                className: "bg-gradient-to-r from-yellow-500/10 to-transparent border-l-2 border-yellow-500 text-yellow-400"
+                            }}
+                            inactiveProps={{
+                                className: "hover:bg-white/5 text-gray-400 hover:text-white"
+                            }}
+                            onClick={closeMobileMenu}
+                        >
+                            <Mail size={20} className="group-hover:text-yellow-400 transition-colors" />
+                            <span>Inquiries</span>
+                            {unreadCount > 0 && (
+                                <span className="ml-auto bg-yellow-500 text-black text-xs font-bold px-2 py-0.5 rounded-full">
+                                    {unreadCount}
+                                </span>
+                            )}
+                        </Link>
+
+                        <Link 
+                            to="/dashboard/settings" 
+                            className="flex items-center space-x-3 px-4 py-3 rounded-lg text-white transition-all duration-200 group"
+                            activeProps={{
+                                className: "bg-gradient-to-r from-yellow-500/10 to-transparent border-l-2 border-yellow-500 text-yellow-400"
+                            }}
+                            inactiveProps={{
+                                className: "hover:bg-white/5 text-gray-400 hover:text-white"
+                            }}
+                            onClick={closeMobileMenu}
+                        >
+                            <SettingsIcon size={20} className="group-hover:text-yellow-400 transition-colors" />
+                            <span>Event Settings</span>
                         </Link>
 
                         {isSuperuser && (

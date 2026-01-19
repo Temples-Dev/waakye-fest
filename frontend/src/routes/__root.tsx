@@ -3,6 +3,7 @@ import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 
 import Header from '../components/Header'
+import { Toaster } from '@/components/ui/sonner'
 
 export const Route = createRootRoute({
   component: () => (
@@ -11,6 +12,7 @@ export const Route = createRootRoute({
          <Header />
       </div>
       <Outlet />
+      <Toaster richColors position='top-right'/>
       <TanStackDevtools
         config={{
           position: 'bottom-right',

@@ -18,6 +18,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as DashboardSettingsRouteImport } from './routes/dashboard/settings'
 import { Route as DashboardOrganizersRouteImport } from './routes/dashboard/organizers'
+import { Route as DashboardInquiriesRouteImport } from './routes/dashboard/inquiries'
 import { Route as DashboardCheckInRouteImport } from './routes/dashboard/check-in'
 import { Route as DashboardAttendeesRouteImport } from './routes/dashboard/attendees'
 import { Route as DashboardAnalyticsRouteImport } from './routes/dashboard/analytics'
@@ -67,6 +68,11 @@ const DashboardOrganizersRoute = DashboardOrganizersRouteImport.update({
   path: '/organizers',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardInquiriesRoute = DashboardInquiriesRouteImport.update({
+  id: '/inquiries',
+  path: '/inquiries',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardCheckInRoute = DashboardCheckInRouteImport.update({
   id: '/check-in',
   path: '/check-in',
@@ -93,6 +99,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/analytics': typeof DashboardAnalyticsRoute
   '/dashboard/attendees': typeof DashboardAttendeesRoute
   '/dashboard/check-in': typeof DashboardCheckInRoute
+  '/dashboard/inquiries': typeof DashboardInquiriesRoute
   '/dashboard/organizers': typeof DashboardOrganizersRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/': typeof DashboardIndexRoute
@@ -106,6 +113,7 @@ export interface FileRoutesByTo {
   '/dashboard/analytics': typeof DashboardAnalyticsRoute
   '/dashboard/attendees': typeof DashboardAttendeesRoute
   '/dashboard/check-in': typeof DashboardCheckInRoute
+  '/dashboard/inquiries': typeof DashboardInquiriesRoute
   '/dashboard/organizers': typeof DashboardOrganizersRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard': typeof DashboardIndexRoute
@@ -121,6 +129,7 @@ export interface FileRoutesById {
   '/dashboard/analytics': typeof DashboardAnalyticsRoute
   '/dashboard/attendees': typeof DashboardAttendeesRoute
   '/dashboard/check-in': typeof DashboardCheckInRoute
+  '/dashboard/inquiries': typeof DashboardInquiriesRoute
   '/dashboard/organizers': typeof DashboardOrganizersRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/': typeof DashboardIndexRoute
@@ -137,6 +146,7 @@ export interface FileRouteTypes {
     | '/dashboard/analytics'
     | '/dashboard/attendees'
     | '/dashboard/check-in'
+    | '/dashboard/inquiries'
     | '/dashboard/organizers'
     | '/dashboard/settings'
     | '/dashboard/'
@@ -150,6 +160,7 @@ export interface FileRouteTypes {
     | '/dashboard/analytics'
     | '/dashboard/attendees'
     | '/dashboard/check-in'
+    | '/dashboard/inquiries'
     | '/dashboard/organizers'
     | '/dashboard/settings'
     | '/dashboard'
@@ -164,6 +175,7 @@ export interface FileRouteTypes {
     | '/dashboard/analytics'
     | '/dashboard/attendees'
     | '/dashboard/check-in'
+    | '/dashboard/inquiries'
     | '/dashboard/organizers'
     | '/dashboard/settings'
     | '/dashboard/'
@@ -243,6 +255,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardOrganizersRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/inquiries': {
+      id: '/dashboard/inquiries'
+      path: '/inquiries'
+      fullPath: '/dashboard/inquiries'
+      preLoaderRoute: typeof DashboardInquiriesRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/check-in': {
       id: '/dashboard/check-in'
       path: '/check-in'
@@ -271,6 +290,7 @@ interface DashboardRouteChildren {
   DashboardAnalyticsRoute: typeof DashboardAnalyticsRoute
   DashboardAttendeesRoute: typeof DashboardAttendeesRoute
   DashboardCheckInRoute: typeof DashboardCheckInRoute
+  DashboardInquiriesRoute: typeof DashboardInquiriesRoute
   DashboardOrganizersRoute: typeof DashboardOrganizersRoute
   DashboardSettingsRoute: typeof DashboardSettingsRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
@@ -280,6 +300,7 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardAnalyticsRoute: DashboardAnalyticsRoute,
   DashboardAttendeesRoute: DashboardAttendeesRoute,
   DashboardCheckInRoute: DashboardCheckInRoute,
+  DashboardInquiriesRoute: DashboardInquiriesRoute,
   DashboardOrganizersRoute: DashboardOrganizersRoute,
   DashboardSettingsRoute: DashboardSettingsRoute,
   DashboardIndexRoute: DashboardIndexRoute,
