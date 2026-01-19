@@ -79,7 +79,7 @@ export function Dashboard() {
                     search: search
                 })
                 
-                const res = await fetch(`${apiUrl}/api/tickets/transactions/?${query}`, {
+                const res = await fetch(`${apiUrl}/api/transactions/?${query}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
