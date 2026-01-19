@@ -120,7 +120,7 @@ function CheckIn() {
         (decodedText) => {
           handleCheckIn(decodedText)
         },
-        (errorMessage) => {
+        (_errorMessage) => {
           // parse error, ignore it.
         }
       )
