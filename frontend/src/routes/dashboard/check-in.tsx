@@ -88,6 +88,14 @@ function CheckIn() {
       const scanner = new Html5Qrcode('qr-reader')
       scannerRef.current = scanner
 
+      // Check for Secure Context (HTTPS)
+      if (window.isSecureContext === false) {
+        setError('HTTPS required. Camera access is blocked on insecure connections (HTTP). Please access via HTTPS.')
+        return
+      }
+
+      // getCameras call and logic below...
+
       // Get list of available cameras
       let cameraId = ''
       try {
