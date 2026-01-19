@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status, generics
+from rest_framework import status, generics, permissions
 from django.conf import settings
 from .models import Ticket
 from .serializers import TicketSerializer
@@ -104,3 +104,20 @@ class DashboardStatsView(APIView):
             'total_revenue': total_revenue,
             'recent_sales': recent_sales_data
         })
+
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.filters import SearchFilter
+
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
+class TransactionListView(generics.ListAPIView):
+    queryset = Ticket.objects.all().order_by('-created_at')
+    serializer_class = TicketSerializer
+    pagination_class = StandardResultsSetPagination
+    filter_backends = [SearchFilter]
+    search_fields = ['name', 'email', 'paystack_reference', 'phone_number']
+    permission_classes = [permissions.IsAuthenticated]
+

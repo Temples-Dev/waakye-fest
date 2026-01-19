@@ -23,7 +23,7 @@ interface TicketData {
   type: 'General Admission'
 }
 
-function BuyTickets() {
+export function BuyTickets() {
   const [step, setStep] = useState<Step>('quantity')
   const [quantity, setQuantity] = useState(1)
   const [names, setNames] = useState<string[]>([''])

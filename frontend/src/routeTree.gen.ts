@@ -9,12 +9,19 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as DetailsRouteImport } from './routes/details'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as BuyTicketsRouteImport } from './routes/buy-tickets'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DetailsRoute = DetailsRouteImport.update({
   id: '/details',
   path: '/details',
@@ -40,47 +47,80 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/buy-tickets': typeof BuyTicketsRoute
   '/contact': typeof ContactRoute
-  '/dashboard': typeof DashboardRoute
+  '/dashboard': typeof DashboardRouteWithChildren
   '/details': typeof DetailsRoute
+  '/login': typeof LoginRoute
+  '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/buy-tickets': typeof BuyTicketsRoute
   '/contact': typeof ContactRoute
-  '/dashboard': typeof DashboardRoute
   '/details': typeof DetailsRoute
+  '/login': typeof LoginRoute
+  '/dashboard': typeof DashboardIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/buy-tickets': typeof BuyTicketsRoute
   '/contact': typeof ContactRoute
-  '/dashboard': typeof DashboardRoute
+  '/dashboard': typeof DashboardRouteWithChildren
   '/details': typeof DetailsRoute
+  '/login': typeof LoginRoute
+  '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/buy-tickets' | '/contact' | '/dashboard' | '/details'
+  fullPaths:
+    | '/'
+    | '/buy-tickets'
+    | '/contact'
+    | '/dashboard'
+    | '/details'
+    | '/login'
+    | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/buy-tickets' | '/contact' | '/dashboard' | '/details'
-  id: '__root__' | '/' | '/buy-tickets' | '/contact' | '/dashboard' | '/details'
+  to: '/' | '/buy-tickets' | '/contact' | '/details' | '/login' | '/dashboard'
+  id:
+    | '__root__'
+    | '/'
+    | '/buy-tickets'
+    | '/contact'
+    | '/dashboard'
+    | '/details'
+    | '/login'
+    | '/dashboard/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BuyTicketsRoute: typeof BuyTicketsRoute
   ContactRoute: typeof ContactRoute
-  DashboardRoute: typeof DashboardRoute
+  DashboardRoute: typeof DashboardRouteWithChildren
   DetailsRoute: typeof DetailsRoute
+  LoginRoute: typeof LoginRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/details': {
       id: '/details'
       path: '/details'
@@ -116,15 +156,35 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
   }
 }
+
+interface DashboardRouteChildren {
+  DashboardIndexRoute: typeof DashboardIndexRoute
+}
+
+const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardIndexRoute: DashboardIndexRoute,
+}
+
+const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
+  DashboardRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BuyTicketsRoute: BuyTicketsRoute,
   ContactRoute: ContactRoute,
-  DashboardRoute: DashboardRoute,
+  DashboardRoute: DashboardRouteWithChildren,
   DetailsRoute: DetailsRoute,
+  LoginRoute: LoginRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

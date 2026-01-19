@@ -7,7 +7,7 @@ export const Route = createFileRoute('/details')({
   component: Details,
 })
 
-function Details() {
+export function Details() {
   return (
     <div className="min-h-screen bg-black pt-24 px-4 pb-12">
       <div className="max-w-4xl mx-auto space-y-12">

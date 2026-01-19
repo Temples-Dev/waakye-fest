@@ -2,10 +2,10 @@ import { createFileRoute } from '@tanstack/react-router'
 import EventHero from '../components/EventHero'
 
 export const Route = createFileRoute('/')({
-  component: App,
+  component: Index,
 })
 
-function App() {
+export function Index() {
   return (
     <div className="bg-black min-h-screen">
       <EventHero />

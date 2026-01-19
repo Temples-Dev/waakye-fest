@@ -10,7 +10,7 @@ export const Route = createFileRoute('/contact')({
   component: Contact,
 })
 
-function Contact() {
+export function Contact() {
   return (
     <div className="min-h-screen bg-black pt-24 px-4 pb-12">
       <div className="max-w-4xl mx-auto space-y-12">
