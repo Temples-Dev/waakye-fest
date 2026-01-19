@@ -49,7 +49,7 @@ export function DashboardLayout() {
                         }}
                         inactiveProps={{
                             className: "hover:bg-white/5 text-gray-400 hover:text-white"
-                        }}
+                        }}  
                     >
                         <LayoutDashboard size={20} className="group-hover:text-yellow-400 transition-colors" />
                         <span>Overview</span>

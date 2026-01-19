@@ -13,6 +13,8 @@ export const Route = createFileRoute('/dashboard/settings')({
 const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8001'
 
 function Settings() {
+    console.log('Settings component mounted')
+    // Settings page
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
     const [settings, setSettings] = useState({

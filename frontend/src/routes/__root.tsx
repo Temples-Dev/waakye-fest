@@ -7,7 +7,9 @@ import Header from '../components/Header'
 export const Route = createRootRoute({
   component: () => (
     <>
-      <Header />
+      <div className={!window.location.pathname.startsWith('/dashboard') ? 'block' : 'hidden'}>
+         <Header />
+      </div>
       <Outlet />
       <TanStackDevtools
         config={{
