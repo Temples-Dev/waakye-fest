@@ -16,13 +16,10 @@ import { BuyTickets } from './routes/buy-tickets'
 import { Contact } from './routes/contact'
 
 import { Outlet } from '@tanstack/react-router'
-import Header from './components/Header'
-
 // Define a root route
 const rootRoute = createRootRoute({
   component: () => (
     <>
-      <Header />
       <Outlet />
     </>
   ),

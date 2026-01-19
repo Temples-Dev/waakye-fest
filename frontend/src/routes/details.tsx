@@ -2,6 +2,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Card, CardContent } from '@/components/ui/card'
 import { Calendar, Clock, MapPin, Music, Utensils, Zap } from 'lucide-react'
+import Header from '@/components/Header'
 
 export const Route = createFileRoute('/details')({
   component: Details,
@@ -10,6 +11,7 @@ export const Route = createFileRoute('/details')({
 export function Details() {
   return (
     <div className="min-h-screen bg-black pt-24 px-4 pb-12">
+      <Header />
       <div className="max-w-4xl mx-auto space-y-12">
         
         {/* Header */}

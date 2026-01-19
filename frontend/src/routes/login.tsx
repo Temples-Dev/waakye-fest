@@ -111,10 +111,10 @@ export function LoginPage() {
                     <CardFooter className="pb-6">
                         <Button 
                             type="submit" 
-                            className="w-full bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700 text-white border-0 font-bold py-5 shadow-lg shadow-orange-900/20 transition-all hover:scale-[1.02]" 
+                            className="w-full mt-4 bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700 text-white border-0 font-bold py-5 shadow-lg shadow-orange-900/20 transition-all hover:scale-[1.02]" 
                             disabled={loading}
                         >
-                            {loading ? 'Authenticating...' : 'Enter Dashboard'}
+                            {loading ? 'Authenticating...' : 'Login'}
                         </Button>
                     </CardFooter>
                 </form>

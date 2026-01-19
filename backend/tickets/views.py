@@ -88,6 +88,7 @@ class TicketDetailView(generics.RetrieveAPIView):
     lookup_field = 'id'
 
 class DashboardStatsView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
     def get(self, request):
         total_tickets = Ticket.objects.count()
         verified_tickets = Ticket.objects.filter(verified=True).count()

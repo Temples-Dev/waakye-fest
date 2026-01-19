@@ -10,6 +10,7 @@ import { toPng } from 'html-to-image'
 import download from 'downloadjs'
 import { usePaystackPayment } from 'react-paystack'
 import { Loader2, Download, CheckCircle, Smartphone } from 'lucide-react'
+import Header from '@/components/Header'
 
 export const Route = createFileRoute('/buy-tickets')({
   component: BuyTickets,
@@ -349,6 +350,7 @@ export function BuyTickets() {
 
   return (
     <div className="min-h-screen bg-black flex flex-col items-center justify-center p-4 pt-24">
+      <Header />
       {renderStep()}
     </div>
   )

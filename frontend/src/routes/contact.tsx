@@ -5,6 +5,7 @@ import { Mail, Phone, Instagram } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import Header from '@/components/Header'
 
 export const Route = createFileRoute('/contact')({
   component: Contact,
@@ -13,6 +14,7 @@ export const Route = createFileRoute('/contact')({
 export function Contact() {
   return (
     <div className="min-h-screen bg-black pt-24 px-4 pb-12">
+      <Header />
       <div className="max-w-4xl mx-auto space-y-12">
         
         {/* Header */}
