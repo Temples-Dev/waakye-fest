@@ -74,7 +74,7 @@ WSGI_APPLICATION = 'wakyefest_backend.wsgi.application'
 DATABASES = {
     'default': config(
         'DATABASE_URL',
-        default=f"postgres://{config('DB_USER', default='')}:{config('DB_PASSWORD', default='')}@{config('DB_HOST', default='localhost')}:{config('DB_PORT', default='5432')}/{config('DB_NAME', default='')}",
+        default='postgres://wakyeuser:wakyepass@db:5432/wakyefest',
         cast=dj_database_url.parse
     )
 }
