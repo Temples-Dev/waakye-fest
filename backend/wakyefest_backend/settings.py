@@ -79,6 +79,13 @@ DATABASES = {
     )
 }
 
+# Neon.tech serverless Postgres requires SSL
+# Add SSL configuration if using Neon
+if 'neon.tech' in DATABASES['default'].get('HOST', ''):
+    DATABASES['default']['OPTIONS'] = {
+        'sslmode': 'require',
+    }
+
 
 # CORS Configuration
 
