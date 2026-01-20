@@ -129,9 +129,8 @@ class DashboardStatsView(APIView):
 
         total_tickets = tickets_qs.count()
         verified_tickets = tickets_qs.filter(verified=True).count()
-        # Revenue: Assuming fixed price of 50 GHS per ticket for now as per frontend
-        # In a real app, we should store price in the Ticket model or Transaction model
-        total_revenue = verified_tickets * 50 
+        # Revenue: Assuming fixed price of 0.50 GHS per ticket for testing
+        total_revenue = verified_tickets * 0.50 
         
         recent_sales = tickets_qs.filter(verified=True).order_by('-created_at')[:5]
         recent_sales_data = TicketSerializer(recent_sales, many=True).data

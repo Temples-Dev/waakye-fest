@@ -53,7 +53,7 @@ export const TicketView = ({ name, ticketId, shortCode, type, eventDetails }: Ti
             </div>
             <div>
                  <div className="text-gray-400 text-xs uppercase tracking-wider mb-1">Cost</div>
-                 <div className="text-sm font-bold text-yellow-500">GHS 50.00</div>
+                 <div className="text-sm font-bold text-yellow-500">GHS 0.50</div>
             </div>
              <div>
                  <div className="text-gray-400 text-xs uppercase tracking-wider mb-1">Ticket ID</div>
