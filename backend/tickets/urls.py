@@ -4,8 +4,10 @@ from .analytics_views import EventAnalyticsView, YearOverYearAnalyticsView
 from .user_views import OrganizerListView, OrganizerCreateView, OrganizerDeleteView, CurrentUserView
 from .inquiry_views import InquiryCreateView, InquiryListView, InquiryUnreadCountView, InquiryMarkReadView, InquiryMarkUnreadView
 from .event_views import EventListCreateView, EventDetailView, EventSetActiveView
+from .health_views import health_check
 
 urlpatterns = [
+    path('health/', health_check, name='health-check'),
     path('initiate-payment/', InitiatePaymentView.as_view(), name='initiate-payment'),
     path('verify-payment/', VerifyPaymentView.as_view(), name='verify-payment'),
     path('ticket/<uuid:id>/', TicketDetailView.as_view(), name='ticket-detail'),
