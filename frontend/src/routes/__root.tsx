@@ -1,29 +1,16 @@
-import { Outlet, createRootRoute } from '@tanstack/react-router'
-import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
-import { TanStackDevtools } from '@tanstack/react-devtools'
-
+import { Outlet, useLocation } from 'react-router-dom'
 import Header from '../components/Header'
 import { Toaster } from '@/components/ui/sonner'
 
-export const Route = createRootRoute({
-  component: () => (
+export function AppShell() {
+  const location = useLocation()
+  const isDashboard = location.pathname.startsWith('/dashboard')
+
+  return (
     <>
-      <div className={!window.location.pathname.startsWith('/dashboard') ? 'block' : 'hidden'}>
-         <Header />
-      </div>
+      {!isDashboard && <Header />}
       <Outlet />
-      <Toaster richColors position='top-right'/>
-      <TanStackDevtools
-        config={{
-          position: 'bottom-right',
-        }}
-        plugins={[
-          {
-            name: 'Tanstack Router',
-            render: <TanStackRouterDevtoolsPanel />,
-          },
-        ]}
-      />
+      <Toaster richColors position="top-right" />
     </>
-  ),
-})
+  )
+}

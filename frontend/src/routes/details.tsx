@@ -1,13 +1,8 @@
-
 import { useState, useEffect } from 'react'
-import { createFileRoute } from '@tanstack/react-router'
 import { Card, CardContent } from '@/components/ui/card'
 import { Calendar, Clock, MapPin, Music, Utensils, Zap } from 'lucide-react'
 import Header from '@/components/Header'
 
-export const Route = createFileRoute('/details')({
-  component: Details,
-})
 
 export function Details() {
   const [settings, setSettings] = useState({

@@ -1,14 +1,9 @@
-import { createFileRoute } from '@tanstack/react-router'
 import { useState, useEffect, useRef } from 'react'
 import { Html5Qrcode } from 'html5-qrcode'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Loader2, CheckCircle, XCircle, Camera, CameraOff, Scan } from 'lucide-react'
-
-export const Route = createFileRoute('/dashboard/check-in')({
-  component: CheckIn,
-})
 
 const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8001'
 
@@ -27,7 +22,7 @@ interface CheckInResult {
   attendees?: TicketData[]
 }
 
-function CheckIn() {
+export function CheckIn() {
   const [scanning, setScanning] = useState(false)
   const [loading, setLoading] = useState(false)
   const [manualId, setManualId] = useState('')
@@ -37,7 +32,10 @@ function CheckIn() {
   
   const scannerRef = useRef<Html5Qrcode | null>(null)
   const lastScanRef = useRef<string>('')
-  const scanTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const scanTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  // Guard against React StrictMode double-invoke and concurrent starts
+  const isStartingRef = useRef(false)
+  const isStoppingRef = useRef(false)
 
   const handleCheckIn = async (qrContent: string, isManualCode = false) => {
     // Prevent duplicate scans within 2 seconds (only for QR)
@@ -100,29 +98,56 @@ function CheckIn() {
     }
   }
 
-
   const startScanner = async () => {
+    // Prevent double-start from StrictMode or rapid clicks
+    if (isStartingRef.current || scannerRef.current) return
+    isStartingRef.current = true
+
     try {
       setError(null)
-      const scanner = new Html5Qrcode('qr-reader')
-      scannerRef.current = scanner
 
-      // getCameras call and logic below...
+      // Step 1: Explicitly request camera permission before doing anything else.
+      // This surfaces a clean permission error in production HTTPS contexts
+      // before html5-qrcode tries to enumerate devices.
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true })
+        // Stop all tracks immediately — we just wanted the permission grant.
+        stream.getTracks().forEach(t => t.stop())
+      } catch (permErr: any) {
+        let msg = 'Camera permission required. '
+        if (permErr?.name === 'NotAllowedError' || permErr?.name === 'PermissionDeniedError') {
+          msg += 'Please allow camera access in your browser settings and reload the page.'
+        } else if (permErr?.name === 'NotFoundError') {
+          msg += 'No camera found on this device.'
+        } else {
+          msg += permErr?.message || 'Please check your browser settings.'
+        }
+        setError(msg)
+        isStartingRef.current = false
+        return
+      }
 
-      // Get list of available cameras
+      // Step 2: Now enumerate cameras with permission granted.
       let cameraId = ''
       try {
         const devices = await Html5Qrcode.getCameras()
         if (devices && devices.length) {
-          // Prefer back camera (usually last in list on mobile)
-          // or try to find one with 'back' in label
-          const backCamera = devices.find(device => device.label.toLowerCase().includes('back'))
+          // Prefer back camera (rear-facing) on mobile
+          const backCamera = devices.find(device =>
+            device.label.toLowerCase().includes('back') ||
+            device.label.toLowerCase().includes('rear') ||
+            device.label.toLowerCase().includes('environment')
+          )
           cameraId = backCamera ? backCamera.id : devices[devices.length - 1].id
         }
-      } catch (err) {
-        console.warn('Error getting cameras:', err)
-        // Fallback to simpler config if getCameras fails
+      } catch (enumErr) {
+        console.warn('Could not enumerate cameras, will fall back to facingMode:', enumErr)
       }
+
+      // Step 3: The #qr-reader div is always in the DOM (see render below).
+      // We can safely create the scanner instance now.
+      const scanner = new Html5Qrcode('qr-reader')
+      scannerRef.current = scanner
 
       await scanner.start(
         cameraId ? cameraId : { facingMode: 'environment' },
@@ -134,13 +159,13 @@ function CheckIn() {
           handleCheckIn(decodedText)
         },
         (_errorMessage) => {
-          // parse error, ignore it.
+          // Scan parse errors are expected — ignore them.
         }
       )
 
       setScanning(true)
     } catch (err: any) {
-      console.error('Scanner error:', err)
+      console.error('Scanner start error:', err)
       
       let msg = 'Failed to start camera. '
       if (err?.name === 'NotAllowedError') {
@@ -148,25 +173,49 @@ function CheckIn() {
       } else if (err?.name === 'NotFoundError') {
         msg += 'No camera found.'
       } else if (err?.name === 'NotReadableError') {
-        msg += 'Camera is in use.'
+        msg += 'Camera is already in use by another app.'
+      } else if (err?.name === 'OverconstrainedError') {
+        msg += 'Camera constraints could not be satisfied. Try refreshing.'
       } else {
-        msg += err.message || 'Please use manual entry.'
+        msg += err?.message || 'Please use manual entry instead.'
       }
       
+      // Clean up partial state
+      if (scannerRef.current) {
+        try { scannerRef.current.clear() } catch (_) {}
+        scannerRef.current = null
+      }
       setError(msg)
+    } finally {
+      isStartingRef.current = false
     }
   }
 
   const stopScanner = async () => {
-    if (scannerRef.current) {
+    if (isStoppingRef.current || !scannerRef.current) return
+    isStoppingRef.current = true
+
+    try {
+      const scanner = scannerRef.current
+      scannerRef.current = null
+
+      // Only call stop() if the scanner is actually running
       try {
-        await scannerRef.current.stop()
-        scannerRef.current.clear()
-        scannerRef.current = null
-        setScanning(false)
-      } catch (err) {
-        console.error('Error stopping scanner:', err)
+        await scanner.stop()
+      } catch (stopErr: any) {
+        // "Scanner is not running" is fine — swallow it
+        if (!stopErr?.message?.includes('not running')) {
+          console.error('Error stopping scanner:', stopErr)
+        }
       }
+
+      try {
+        scanner.clear()
+      } catch (_) {}
+
+      setScanning(false)
+    } finally {
+      isStoppingRef.current = false
     }
   }
 
@@ -178,9 +227,16 @@ function CheckIn() {
     setManualId('')
   }
 
+  // Cleanup on unmount
   useEffect(() => {
     return () => {
-      stopScanner()
+      // Immediate synchronous cleanup reference
+      const scanner = scannerRef.current
+      scannerRef.current = null
+      if (scanner) {
+        scanner.stop().catch(() => {})
+      try { scanner.clear() } catch (_) {}
+      }
       if (scanTimeoutRef.current) clearTimeout(scanTimeoutRef.current)
     }
   }, [])
@@ -201,14 +257,9 @@ function CheckIn() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* Scanner Container */}
+          {/* Scanner Container — always in DOM so html5-qrcode can always find #qr-reader */}
           <div className="relative">
-            <div 
-              id="qr-reader" 
-              className={`w-full ${scanning ? 'block' : 'hidden'}`}
-              style={{ border: '2px solid #444', borderRadius: '8px' }}
-            />
-            
+            {/* Placeholder shown when not scanning */}
             {!scanning && (
               <div className="w-full h-64 bg-black/40 border-2 border-dashed border-white/20 rounded-lg flex items-center justify-center">
                 <div className="text-center">
@@ -217,6 +268,24 @@ function CheckIn() {
                 </div>
               </div>
             )}
+
+            {/* 
+              CRITICAL FIX: #qr-reader must ALWAYS be in the DOM.
+              We use visibility + height instead of conditional rendering,
+              so html5-qrcode can always attach to it.
+            */}
+            <div
+              id="qr-reader"
+              style={{
+                border: scanning ? '2px solid #444' : 'none',
+                borderRadius: '8px',
+                overflow: 'hidden',
+                // Hide the element without removing it from DOM
+                visibility: scanning ? 'visible' : 'hidden',
+                height: scanning ? 'auto' : '0px',
+                minHeight: scanning ? '200px' : '0px',
+              }}
+            />
           </div>
 
           {/* Scanner Controls */}
@@ -224,6 +293,7 @@ function CheckIn() {
             {!scanning ? (
               <Button 
                 onClick={startScanner}
+                disabled={isStartingRef.current}
                 className="bg-green-600 hover:bg-green-700 text-white font-bold flex-1"
               >
                 <Camera className="mr-2 h-4 w-4" />
@@ -248,7 +318,7 @@ function CheckIn() {
             </div>
           )}
 
-          {/* Last Result */}
+          {/* Processing Indicator */}
           {loading && (
             <div className="bg-blue-900/40 border border-blue-700/50 text-blue-400 p-4 rounded-lg flex items-center">
               <Loader2 className="mr-2 h-5 w-5 animate-spin" />
@@ -256,6 +326,7 @@ function CheckIn() {
             </div>
           )}
 
+          {/* Last Result */}
           {!loading && lastResult && (
             <div className={`p-4 rounded-lg border ${
               lastResult.success 
@@ -272,7 +343,7 @@ function CheckIn() {
                   <span className="text-sm ml-auto opacity-75">({lastResult.timestamp})</span>
               </div>
               
-              {/* Display Attendees if available */}
+              {/* Attendee details on success */}
               {lastResult.success && lastResult.attendees && lastResult.attendees.length > 0 && (
                   <div className="mt-4 space-y-2 border-t border-green-700/30 pt-4">
                       <p className="text-sm text-green-300 font-bold uppercase tracking-wider">Attendee Details</p>
@@ -325,7 +396,7 @@ function CheckIn() {
         <Card className="bg-[#111] border-white/10 max-w-2xl">
           <CardHeader>
             <CardTitle className="text-white">Recent Check-ins</CardTitle>
-            <CardDescription className="text-gray-400">{recentCheckIns.length} successful check-ins</CardDescription>
+            <CardDescription className="text-gray-400">{recentCheckIns.length} successful check-ins this session</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">

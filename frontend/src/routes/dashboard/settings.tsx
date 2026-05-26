@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -17,9 +17,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 
-export const Route = createFileRoute('/dashboard/settings')({
-  component: Settings,
-})
+
 
 const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8001'
 
@@ -33,7 +31,7 @@ interface Event {
     ticket_price: string
 }
 
-function Settings() {
+export function Settings() {
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
     const [events, setEvents] = useState<Event[]>([])

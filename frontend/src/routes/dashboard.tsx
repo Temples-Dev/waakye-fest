@@ -1,16 +1,12 @@
-
-import { Outlet, useNavigate } from '@tanstack/react-router'
+import { Outlet, useNavigate, Link, useLocation } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { Link } from '@tanstack/react-router'
 import { LayoutDashboard, Users, LogOut, ScanLine, Menu, X, TrendingUp, Shield, Mail, Settings as SettingsIcon } from 'lucide-react'
-import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/dashboard')({
-  component: DashboardLayout,
-})
+const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8001'
 
 export function DashboardLayout() {
     const navigate = useNavigate()
+    const location = useLocation()
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
     const [isSuperuser, setIsSuperuser] = useState(false)
     const [unreadCount, setUnreadCount] = useState(0)
@@ -19,12 +15,11 @@ export function DashboardLayout() {
         const checkUser = async () => {
             const token = localStorage.getItem('access_token')
             if (!token) {
-                navigate({ to: '/login' })
+                navigate('/login')
                 return
             }
 
             try {
-                const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8001'
                 const res = await fetch(`${apiUrl}/api/me/`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 })
@@ -51,11 +46,23 @@ export function DashboardLayout() {
     const handleLogout = () => {
         localStorage.removeItem('access_token')
         localStorage.removeItem('refresh_token')
-        navigate({ to: '/login' })
+        navigate('/login')
     }
 
     const closeMobileMenu = () => {
         setMobileMenuOpen(false)
+    }
+
+    const navLinkClass = (path: string, exact = false) => {
+        const isActive = exact
+            ? location.pathname === path
+            : location.pathname === path || location.pathname.startsWith(path + '/')
+        return [
+            'flex items-center space-x-3 px-4 py-3 rounded-lg text-white transition-all duration-200 group',
+            isActive
+                ? 'bg-gradient-to-r from-yellow-500/10 to-transparent border-l-2 border-yellow-500 text-yellow-400'
+                : 'hover:bg-white/5 text-gray-400 hover:text-white',
+        ].join(' ')
     }
 
     return (
@@ -93,15 +100,8 @@ export function DashboardLayout() {
                     
                     <nav className="space-y-2">
                         <Link 
-                            to="/dashboard" 
-                            className="flex items-center space-x-3 px-4 py-3 rounded-lg text-white transition-all duration-200 group"
-                            activeProps={{
-                                className: "bg-gradient-to-r from-yellow-500/10 to-transparent border-l-2 border-yellow-500 text-yellow-400"
-                            }}
-                            inactiveProps={{
-                                className: "hover:bg-white/5 text-gray-400 hover:text-white"
-                            }}
-                            activeOptions={{ exact: true }}
+                            to="/dashboard"
+                            className={navLinkClass('/dashboard', true)}
                             onClick={closeMobileMenu}
                         >
                             <LayoutDashboard size={20} className="group-hover:text-yellow-400 transition-colors" />
@@ -109,14 +109,8 @@ export function DashboardLayout() {
                         </Link>
                         
                         <Link 
-                            to="/dashboard/check-in" 
-                            className="flex items-center space-x-3 px-4 py-3 rounded-lg text-white transition-all duration-200 group"
-                            activeProps={{
-                                className: "bg-gradient-to-r from-yellow-500/10 to-transparent border-l-2 border-yellow-500 text-yellow-400"
-                            }}
-                            inactiveProps={{
-                                className: "hover:bg-white/5 text-gray-400 hover:text-white"
-                            }}
+                            to="/dashboard/check-in"
+                            className={navLinkClass('/dashboard/check-in')}
                             onClick={closeMobileMenu}
                         >
                             <ScanLine size={20} className="group-hover:text-yellow-400 transition-colors" />
@@ -124,14 +118,8 @@ export function DashboardLayout() {
                         </Link>
 
                         <Link 
-                            to="/dashboard/attendees" 
-                            className="flex items-center space-x-3 px-4 py-3 rounded-lg text-white transition-all duration-200 group"
-                            activeProps={{
-                                className: "bg-gradient-to-r from-yellow-500/10 to-transparent border-l-2 border-yellow-500 text-yellow-400"
-                            }}
-                            inactiveProps={{
-                                className: "hover:bg-white/5 text-gray-400 hover:text-white"
-                            }}
+                            to="/dashboard/attendees"
+                            className={navLinkClass('/dashboard/attendees')}
                             onClick={closeMobileMenu}
                         >
                             <Users size={20} className="group-hover:text-yellow-400 transition-colors" />
@@ -139,14 +127,8 @@ export function DashboardLayout() {
                         </Link>
 
                         <Link 
-                            to="/dashboard/analytics" 
-                            className="flex items-center space-x-3 px-4 py-3 rounded-lg text-white transition-all duration-200 group"
-                            activeProps={{
-                                className: "bg-gradient-to-r from-yellow-500/10 to-transparent border-l-2 border-yellow-500 text-yellow-400"
-                            }}
-                            inactiveProps={{
-                                className: "hover:bg-white/5 text-gray-400 hover:text-white"
-                            }}
+                            to="/dashboard/analytics"
+                            className={navLinkClass('/dashboard/analytics')}
                             onClick={closeMobileMenu}
                         >
                             <TrendingUp size={20} className="group-hover:text-yellow-400 transition-colors" />
@@ -154,14 +136,8 @@ export function DashboardLayout() {
                         </Link>
 
                         <Link 
-                            to="/dashboard/inquiries" 
-                            className="flex items-center space-x-3 px-4 py-3 rounded-lg text-white transition-all duration-200 group"
-                            activeProps={{
-                                className: "bg-gradient-to-r from-yellow-500/10 to-transparent border-l-2 border-yellow-500 text-yellow-400"
-                            }}
-                            inactiveProps={{
-                                className: "hover:bg-white/5 text-gray-400 hover:text-white"
-                            }}
+                            to="/dashboard/inquiries"
+                            className={navLinkClass('/dashboard/inquiries')}
                             onClick={closeMobileMenu}
                         >
                             <Mail size={20} className="group-hover:text-yellow-400 transition-colors" />
@@ -174,14 +150,8 @@ export function DashboardLayout() {
                         </Link>
 
                         <Link 
-                            to="/dashboard/settings" 
-                            className="flex items-center space-x-3 px-4 py-3 rounded-lg text-white transition-all duration-200 group"
-                            activeProps={{
-                                className: "bg-gradient-to-r from-yellow-500/10 to-transparent border-l-2 border-yellow-500 text-yellow-400"
-                            }}
-                            inactiveProps={{
-                                className: "hover:bg-white/5 text-gray-400 hover:text-white"
-                            }}
+                            to="/dashboard/settings"
+                            className={navLinkClass('/dashboard/settings')}
                             onClick={closeMobileMenu}
                         >
                             <SettingsIcon size={20} className="group-hover:text-yellow-400 transition-colors" />
@@ -190,14 +160,8 @@ export function DashboardLayout() {
 
                         {isSuperuser && (
                             <Link 
-                                to="/dashboard/organizers" 
-                                className="flex items-center space-x-3 px-4 py-3 rounded-lg text-white transition-all duration-200 group"
-                                activeProps={{
-                                    className: "bg-gradient-to-r from-yellow-500/10 to-transparent border-l-2 border-yellow-500 text-yellow-400"
-                                }}
-                                inactiveProps={{
-                                    className: "hover:bg-white/5 text-gray-400 hover:text-white"
-                                }}
+                                to="/dashboard/organizers"
+                                className={navLinkClass('/dashboard/organizers')}
                                 onClick={closeMobileMenu}
                             >
                                 <Shield size={20} className="group-hover:text-purple-400 transition-colors" />
@@ -220,11 +184,7 @@ export function DashboardLayout() {
 
             {/* Main Content */}
             <main className="flex-1 overflow-y-auto bg-[#0a0a0a] relative">
-               {/* Mobile Menu Trigger (hidden as duplicated in fixed overlay logic but keep if needed for layout flow?) 
-                   Actually the fixed button above is better.
-                */}
-                
-                <div className="pt-0 md:pt-0"> {/* Adjusted padding */}
+                <div className="pt-0 md:pt-0">
                     <Outlet />
                 </div>
             </main>

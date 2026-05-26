@@ -1,6 +1,5 @@
-import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
-import { useNavigate } from '@tanstack/react-router'
+import { useNavigate } from 'react-router-dom'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '../components/ui/card'
 import { Input } from '../components/ui/input'
 import { Label } from '../components/ui/label'
@@ -11,10 +10,6 @@ const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8001'
 
 // Reusing the hero image from the landing page
 const HeroImage = "/wakye_fest_hero_bg.png";
-
-export const Route = createFileRoute('/login')({
-  component: LoginPage,
-})
 
 export function LoginPage() {
     const navigate = useNavigate()
@@ -43,7 +38,7 @@ export function LoginPage() {
             if (res.ok) {
                 localStorage.setItem('access_token', data.access)
                 localStorage.setItem('refresh_token', data.refresh)
-                navigate({ to: '/dashboard' })
+                navigate('/dashboard')
             } else {
                 setError(data.detail || 'Login failed')
             }

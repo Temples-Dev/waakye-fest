@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+
 import { useState, useEffect } from 'react'
 import { 
     Card, 
@@ -20,9 +20,7 @@ import {
     Line
 } from 'recharts'
 
-export const Route = createFileRoute('/dashboard/analytics')({
-  component: Analytics,
-})
+
 
 interface EventAnalytics {
     id: string
@@ -34,7 +32,7 @@ interface EventAnalytics {
     total_revenue: number
 }
 
-function Analytics() {
+export function Analytics() {
     const [events, setEvents] = useState<EventAnalytics[]>([])
     const [loading, setLoading] = useState(true)
     const [yoyData, setYoyData] = useState<any>(null)

@@ -1,5 +1,3 @@
-
-import { createFileRoute } from '@tanstack/react-router'
 import { Card, CardContent } from '@/components/ui/card'
 import { Mail, Phone, Instagram, Loader2, CheckCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -8,9 +6,6 @@ import { Label } from '@/components/ui/label'
 import Header from '@/components/Header'
 import { useState } from 'react'
 
-export const Route = createFileRoute('/contact')({
-  component: Contact,
-})
 
 export function Contact() {
   const [formData, setFormData] = useState({

@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { 
     Table, 
@@ -30,9 +30,7 @@ import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Loader2, Trash2, Shield, Plus } from 'lucide-react'
 
-export const Route = createFileRoute('/dashboard/organizers')({
-  component: Organizers,
-})
+
 
 interface Organizer {
     id: number
@@ -45,7 +43,7 @@ interface Organizer {
     date_joined: string
 }
 
-function Organizers() {
+export function Organizers() {
     const navigate = useNavigate()
     const [organizers, setOrganizers] = useState<Organizer[]>([])
     const [loading, setLoading] = useState(true)
@@ -170,7 +168,7 @@ function Organizers() {
                 <Shield className="h-16 w-16 text-red-500 mb-4" />
                 <h2 className="text-2xl font-bold mb-2">Access Denied</h2>
                 <p className="text-gray-400 mb-4">{error}</p>
-                <Button onClick={() => navigate({ to: '/dashboard' })}>Return to Dashboard</Button>
+                <Button onClick={() => navigate('/dashboard')}>Return to Dashboard</Button>
             </div>
         )
     }

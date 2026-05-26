@@ -1,10 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
 import EventHero from '../components/EventHero'
-
-export const Route = createFileRoute('/')({
-  component: Index,
-})
-
 import Header from '../components/Header'
 
 export function Index() {

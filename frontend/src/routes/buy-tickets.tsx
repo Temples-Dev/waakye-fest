@@ -1,5 +1,3 @@
-
-import { createFileRoute } from '@tanstack/react-router'
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -12,9 +10,6 @@ import { usePaystackPayment } from 'react-paystack'
 import { Loader2, Download, CheckCircle, Smartphone } from 'lucide-react'
 import Header from '@/components/Header'
 
-export const Route = createFileRoute('/buy-tickets')({
-  component: BuyTickets,
-})
 
 type Step = 'quantity' | 'details' | 'payment' | 'success'
 

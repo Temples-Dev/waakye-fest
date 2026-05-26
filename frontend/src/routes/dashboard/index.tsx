@@ -1,4 +1,3 @@
-import { createFileRoute } from '@tanstack/react-router'
 import { useEffect, useState, useMemo } from 'react'
 import { 
     useReactTable, 
@@ -30,10 +29,6 @@ interface Stats {
 }
 
 const columnHelper = createColumnHelper<Transaction>()
-
-export const Route = createFileRoute('/dashboard/')({
-  component: Dashboard,
-})
 
 export function Dashboard() {
     const [stats, setStats] = useState<Stats | null>(null)

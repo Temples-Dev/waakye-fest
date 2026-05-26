@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+
 import { useState, useEffect } from 'react'
 import { 
     Table, 
@@ -20,9 +20,7 @@ import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Search, ChevronLeft, ChevronRight, Loader2, CheckCircle } from 'lucide-react'
 
-export const Route = createFileRoute('/dashboard/attendees')({
-  component: Attendees,
-})
+
 
 interface Attendee {
     id: string
@@ -42,7 +40,7 @@ interface PaginatedResponse {
     results: Attendee[]
 }
 
-function Attendees() {
+export function Attendees() {
     const [attendees, setAttendees] = useState<Attendee[]>([])
     const [loading, setLoading] = useState(true)
     const [search, setSearch] = useState('')

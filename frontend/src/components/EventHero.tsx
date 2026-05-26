@@ -1,7 +1,7 @@
 
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Ticket } from 'lucide-react';
-import { Link } from '@tanstack/react-router';
+import { Link } from 'react-router-dom';
 
 // Assuming the image will be placed in public folder or imported.
 // For now, I'll assume it's imported in the parent or I'll use a placeholder style if image fails,
